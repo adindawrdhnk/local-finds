@@ -17,7 +17,7 @@ Colaborator : ChatGPT
 - Terakhir saya membuat file README.md untuk menjawab beberapa pertanyaan yang ada. 
 
 2) Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html.
-CLIENT REQUEST -> URL ROUTING(urls.py) -> VIEW FUNCTION(views.py) -> TEMPLATE HTML(Templates) -> HTTP RESPONSE(HTML Page) -> CLIENT RECEIVES RESPONSE
+- BAGAN : CLIENT REQUEST -> URL ROUTING(urls.py) -> VIEW FUNCTION(views.py) -> TEMPLATE HTML(Templates) -> HTTP RESPONSE(HTML Page) -> CLIENT RECEIVES RESPONSE
 - Klien (misalnya, browser) mengirimkan permintaan HTTP ke server, misalnya ke URL http://localhost:8000/about/.
 - Django menerima permintaan dan menggunakan file urls.py untuk menentukan URL yang diminta. urls.py memetakan URL ke fungsi view yang sesuai.
 - Fungsi view menerima permintaan dan berfungsi sebagai penghubung antara URL dan data. Fungsi ini mungkin mengambil data dari model (jika diperlukan) dan mempersiapkan konteks untuk template.
