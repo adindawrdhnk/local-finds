@@ -1,8 +1,51 @@
-<h1>{{ nama_app }}</h1>
+{% extends "base.html" %}
 
-<h5>NPM: </h5>
-<p>{{ npm }}<p>
-<h5>Name: </h5>
-<p>{{ name }}<p>
-<h5>Class: </h5>
-<p>{{ class }}<p>
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+
+<div class="center-container">
+    <h1 class="app-name">{{ nama_app }}</h1>
+
+    {% if not products %}
+    <p>Belum ada produk di Local Finds.</p>
+    {% else %}
+    <div class="table-wrapper">
+        <table>
+            <tr>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Stock</th>
+                <th>Origin</th>
+                <th>Rating</th>
+                <th>Discount</th>
+            </tr>
+
+            {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.description }}</td>
+                <td>{{ product.stock }}</td>
+                <td>{{ product.origin }}</td>
+                <td>{{ product.rating }}</td>
+                <td>{{ product.discount }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+    
+    <a href="{% url 'main:create_product_entry' %}" class="add-product-button">
+        Add New Product
+    </a>
+    
+    <div class="personal-info">
+        <p>Nama: {{ name }}</p>
+        <p>Kelas: {{ class }}</p>
+        <p>NPM: {{ npm }}</p>
+    </div>
+</div>
+{% endblock content %}
