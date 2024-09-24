@@ -35,6 +35,20 @@ body {
     margin: 20px; /* Jarak atas tombol */
 }
 
+/* Gaya untuk tombol */
+.logout-button {
+    display: inline-block; /* Mengatur tombol sebagai elemen inline-block */
+    background-color: rgb(255, 255, 148); /* Warna latar belakang tombol */
+    border: none; /* Menghapus border default */
+    padding: 10px 20px; /* Padding di sekitar teks tombol */
+    color: black; /* Warna teks tombol */
+    font-size: 16px; /* Ukuran font tombol */
+    cursor: pointer; /* Menampilkan kursor pointer saat hover */
+    border-radius: 5px; /* Sudut tombol melengkung */
+    text-decoration: none; /* Menghapus garis bawah */
+    margin: 20px; /* Jarak atas tombol */
+}
+
 /* Gaya untuk informasi pribadi */
 .personal-info p {
     color: #ffffff; /* Warna teks putih */
@@ -108,3 +122,37 @@ th {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Bayangan untuk efek kedalaman */
     margin-bottom: 20px; /* Jarak bawah pembungkus tabel */
 }
+
+/* Gaya untuk tombol logout */
+.logout-button {
+    background-color: #ff4d4d; /* Warna latar belakang merah muda */
+    border: none; /* Menghapus border default */
+    color: white; /* Warna teks putih */
+    padding: 10px 20px; /* Padding di sekitar teks tombol */
+    font-size: 16px; /* Ukuran font tombol */
+    cursor: pointer; /* Menampilkan kursor pointer saat hover */
+    border-radius: 5px; /* Sudut tombol melengkung */
+    transition: background-color 0.3s ease; /* Transisi halus saat hover */
+    margin: 20px 0; /* Jarak atas dan bawah untuk spasi */
+}
+
+/* Gaya untuk efek hover pada tombol logout */
+.logout-button:hover {
+    background-color: #ff1a1a; /* Warna latar belakang saat hover */
+}
+
+/* Gaya untuk judul login */
+.login h1 {
+    margin-bottom: 20px; /* Jarak bawah judul */
+    color: #318250; /* Warna teks judul */
+}
+
+/* Gaya untuk informasi pesan */
+ul {
+    list-style-type: none; /* Menghapus bullet points dari list */
+    padding: 0; /* Menghapus padding */
+    color: #ffffff; /* Warna teks untuk pesan */
+}
+
+
+

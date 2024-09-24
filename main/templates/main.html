@@ -41,6 +41,12 @@
     <a href="{% url 'main:create_product_entry' %}" class="add-product-button">
         Add New Product
     </a>
+
+    <a href="{% url 'main:logout' %}" class="add-product-button">
+        Logout
+    </a>
+    
+    <h5>Sesi terakhir login: {{ last_login }}</h5>
     
     <div class="personal-info">
         <p>Nama: {{ name }}</p>
