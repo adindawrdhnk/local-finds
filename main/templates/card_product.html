@@ -1,0 +1,19 @@
+<div class="rounded-lg overflow-hidden border-1 border-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300" style="background: #dff5fe;">
+    <div class="p-6">
+        <h5 class="text-center text-xl font-bold text-white mb-2 p-2 rounded" style="background: #508e6a;"> {{ product.name }} </h5>
+        <p class="text-gray-600 text-lg mb-2">Price: <span class="font-semibold text-gray-900">Rp {{ product.price }}</span></p>
+        <p class="text-gray-600 text-md mb-2">Description: <span class="italic">{{ product.description }}</span></p>
+        <p class="text-gray-600 text-md mb-2">Stock: <span class="font-semibold">{{ product.stock }}</span></p>
+        <p class="text-gray-600 text-md mb-2">Origin: <span class="font-semibold">{{ product.origin }}</span></p>
+        <p class="text-gray-600 text-md mb-2">Rating: <span class="font-semibold">{{ product.rating }}</span></p>
+        <p class="text-gray-600 text-md mb-4">Discount: <span class="font-semibold">{{ product.discount }}%</span></p>
+        
+        <div class="flex justify-between items-center mt-4">
+            <a href="{% url 'main:edit_product' product.id %}" class="hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300" style="background: #569cca;">Edit</a>
+            <form action="{% url 'main:delete_product' product.id %}" method="POST" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
