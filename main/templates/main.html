@@ -1,57 +1,50 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
 {% load static %}
 
+{% block meta %}
+<title>Local Finds - Mental Health Tracker</title>
+{% endblock meta %}
+
 {% block content %}
-<link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
-
-<div class="center-container">
-    <h1 class="app-name">{{ nama_app }}</h1>
-
-    {% if not products %}
-    <p>Belum ada produk di Local Finds.</p>
-    {% else %}
-    <div class="table-wrapper">
-        <table>
-            <tr>
-                <th>Product Name</th>
-                <th>Price</th>
-                <th>Description</th>
-                <th>Stock</th>
-                <th>Origin</th>
-                <th>Rating</th>
-                <th>Discount</th>
-            </tr>
-
-            {% for product in products %}
-            <tr>
-                <td>{{ product.name }}</td>
-                <td>{{ product.price }}</td>
-                <td>{{ product.description }}</td>
-                <td>{{ product.stock }}</td>
-                <td>{{ product.origin }}</td>
-                <td>{{ product.rating }}</td>
-                <td>{{ product.discount }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+{% include 'navbar.html' %}
+<div class="overflow-x-hidden px-4 md:px-8 pb-8 pt-24 min-h-screen flex flex-col" style="background: linear-gradient(to bottom, #5ea9d8, #dae7ee); padding: 20px;">
+  <div class="p-2 mb-6 relative mt-24"> 
+    <div class="relative grid grid-cols-1 z-30 md:grid-cols-3 gap-8">
+      {% include "card_info.html" with title='NPM' value=npm %}
+      {% include "card_info.html" with title='Name' value=name %}
+      {% include "card_info.html" with title='Class' value=class %}
     </div>
-    {% endif %}
-    
-    <a href="{% url 'main:create_product_entry' %}" class="add-product-button">
-        Add New Product
-    </a>
-
-    <a href="{% url 'main:logout' %}" class="add-product-button">
-        Logout
-    </a>
-    
-    <h5>Sesi terakhir login: {{ last_login }}</h5>
-    
-    <div class="personal-info">
-        <p>Nama: {{ name }}</p>
-        <p>Kelas: {{ class }}</p>
-        <p>NPM: {{ npm }}</p>
+    <div class="w-full px-6 absolute top-[44px] left-0 z-20 hidden md:flex">
+      <div class="w-full min-h-4 bg-[#318250]"></div>
     </div>
+    <div class="h-full w-full py-6 absolute top-0 left-0 z-20 md:hidden flex">
+      <div class="h-full min-w-4 bg-[#318250] mx-auto"></div>
+    </div>
+  </div>
+
+<div class="flex justify-between items-center mb-6">
+  <div class="px-3 mb-4">
+    <div class="flex rounded-md items-center py-2 px-4 w-fit" style="background: #ffffff;">
+      <h1 class="text-[#154b84] text-center font-bold">Last Login: {{ last_login }}</h1> 
+    </div>
+  </div>
+
+  <a href="{% url 'main:create_product_entry' %}" class="bg-white hover:bg-[#2c7a47] text-[#066129] font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+    Add New Product Entry
+  </a>
+</div>
+
+{% if not products %}
+    <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+        <img src="{% static 'image/sedih-banget.png' %}" alt="Sad face" class="w-32 h-32 mb-4"/>
+        <p class="text-center text-gray-600 mt-4">Belum ada product pada Local Finds!</p>
+    </div>
+{% else %}
+    <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full">
+        {% for product in products %}  
+            {% include 'card_product.html' with product=product %}
+        {% endfor %}
+    </div>
+{% endif %}
 </div>
 {% endblock content %}
