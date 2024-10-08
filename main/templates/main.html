@@ -2,11 +2,12 @@
 {% load static %}
 
 {% block meta %}
-<title>Local Finds - Mental Health Tracker</title>
+<title>Local Finds!</title>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
 {% endblock meta %}
-
 {% block content %}
 {% include 'navbar.html' %}
+
 <div class="overflow-x-hidden px-4 md:px-8 pb-8 pt-24 min-h-screen flex flex-col" style="background: linear-gradient(to bottom, #5ea9d8, #dae7ee); padding: 20px;">
   <div class="p-2 mb-6 relative mt-24"> 
     <div class="relative grid grid-cols-1 z-30 md:grid-cols-3 gap-8">
@@ -32,19 +33,186 @@
   <a href="{% url 'main:create_product_entry' %}" class="bg-white hover:bg-[#2c7a47] text-[#066129] font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
     Add New Product Entry
   </a>
+  <button data-modal-target="crudModal" data-modal-toggle="crudModal" class="bg-white hover:bg-[#2c7a47] text-[#066129] font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105" onclick="showModal();">
+    Add New Product Entry by AJAX
+  </button>
 </div>
 
-{% if not products %}
-    <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
-        <img src="{% static 'image/sedih-banget.png' %}" alt="Sad face" class="w-32 h-32 mb-4"/>
-        <p class="text-center text-gray-600 mt-4">Belum ada product pada Local Finds!</p>
-    </div>
-{% else %}
-    <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full">
-        {% for product in products %}  
-            {% include 'card_product.html' with product=product %}
-        {% endfor %}
-    </div>
-{% endif %}
+<div id="product_cards"></div>
+<!-- Modal untuk Add Product AJAX -->
+<div id="crudModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50 overflow-x-hidden overflow-y-auto transition-opacity duration-300 ease-out">
+  <div id="crudModalContent" class="relative bg-white rounded-lg shadow-lg w-5/6 sm:w-3/4 md:w-2/3 lg:w-1/2 mx-4 sm:mx-0 transform scale-95 opacity-100 transition-transform transition-opacity duration-300 ease-out" style="margin-top: 300px;">
+    <!-- Modal Header -->
+      <div class="flex items-center justify-between p-4 border-b rounded-t bg-[#CCDFFC]-200">
+          <h3 class="text-3xl font-extrabold" style="color: #318250;">Add New Product</h3>
+          <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" id="closeModalBtn">
+              <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="sr-only">Close modal</span>
+          </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="px-6 py-4 space-y-6">
+          <form id="productForm">
+              <div class="mb-4">
+                  <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
+                  <input type="text" id="name" name="name" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter product name" required>
+              </div>
+              <div class="mb-4">
+                  <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                  <textarea id="description" name="description" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter description" required></textarea>
+              </div>
+              <div class="mb-4">
+                  <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+                  <input type="number" id="price" name="price" min="0" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter price" required>
+              </div>
+              <div class="mb-4">
+                  <label for="stock" class="block text-sm font-medium text-gray-700">Stock</label>
+                  <input type="number" id="stock" name="stock" min="0" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter stock quantity" required>
+              </div>
+              <div class="mb-4">
+                  <label for="origin" class="block text-sm font-medium text-gray-700">Origin</label>
+                  <input type="text" id="origin" name="origin" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter origin" required>
+              </div>
+              <div class="mb-4">
+                  <label for="rating" class="block text-sm font-medium text-gray-700">Rating</label>
+                  <input type="number" id="rating" name="rating" min="0" max="5" step="0.1" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter rating (0-5)" required>
+              </div>
+              <div class="mb-4">
+                  <label for="discount" class="block text-sm font-medium text-gray-700">Discount (%)</label>
+                  <input type="number" id="discount" name="discount" min="0" max="100" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter discount percentage" required>
+              </div>
+          </form>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
+          <button type="button" class="text-center bg-gray-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300" id="cancelButton">Back</button>
+          <button type="submit" id="submitProduct" form="productForm" class="bg-[#fff478] text-black font-semibold px-6 py-3 rounded-lg hover:bg-[#e0e049] transition duration-300 ease-in-out w-full">Save</button>
+      </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const animatedDiv = document.getElementById('animatedDiv');
+    setTimeout(() => {
+      animatedDiv.classList.remove('opacity-0', 'translate-y-4');
+      animatedDiv.classList.add('opacity-100', 'translate-y-0');
+    }, 100); 
+  });
+
+  function createProduct() {
+    fetch("{% url 'main:create_product_ajax' %}", {
+      method: "POST",
+      body: new FormData(document.querySelector('#productForm')),
+    })
+    .then(response => refreshProducts(), hideModal())
+
+    document.getElementById("productForm").reset(); 
+    document.querySelector("[data-modal-toggle='crudModal']").click();
+
+    return false;
+  }
+
+  async function getProducts(){
+      return fetch("{% url 'main:show_json' %}").then((res) => res.json())
+  }
+
+  const modal = document.getElementById('crudModal');
+  const modalContent = document.getElementById('crudModalContent');
+
+  function showModal() {
+      const modal = document.getElementById('crudModal');
+      const modalContent = document.getElementById('crudModalContent');
+
+      modal.classList.remove('hidden'); 
+      setTimeout(() => {
+        modalContent.classList.remove('opacity-0', 'scale-95');
+        modalContent.classList.add('opacity-100', 'scale-100');
+      }, 50); 
+  }
+
+  function hideModal() {
+      const modal = document.getElementById('crudModal');
+      const modalContent = document.getElementById('crudModalContent');
+
+      modalContent.classList.remove('opacity-100', 'scale-100');
+      modalContent.classList.add('opacity-0', 'scale-95');
+
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 150); 
+  }
+
+  document.getElementById("cancelButton").addEventListener("click", hideModal);
+  document.getElementById("closeModalBtn").addEventListener("click", hideModal);
+
+  async function refreshProducts() {
+    document.getElementById("product_cards").innerHTML = "";
+    document.getElementById("product_cards").className = "";
+    const products = await getProducts();
+    let htmlString = "";
+    let classNameString = "";
+
+    if (products.length === 0) {
+        classNameString = "flex flex-col items-center justify-center min-h-[24rem] p-6";
+        htmlString = `
+          <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+            <img src="{% static 'image/sedih-banget.png' %}" alt="Sad face" class="w-32 h-32 mb-4"/>
+            <p class="text-center text-gray-600 mt-4">Belum ada product pada Local Finds!</p>
+          </div>
+        `;
+    } else {
+        classNameString = "columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full";
+        products.forEach((item) => {
+            const name = DOMPurify.sanitize(item.fields.name);
+            const price = DOMPurify.sanitize(item.fields.price);
+            const description = DOMPurify.sanitize(item.fields.description);
+            const stock = DOMPurify.sanitize(item.fields.stock);
+            const origin = DOMPurify.sanitize(item.fields.origin);
+            const rating = DOMPurify.sanitize(item.fields.rating);
+            const discount = DOMPurify.sanitize(item.fields.discount);
+            const productId = item.pk; 
+
+            htmlString += `
+            <div class="rounded-lg overflow-hidden border-1 border-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300" style="background: #dff5fe;">
+                <div class="p-6">
+                    <h5 class="text-center text-xl font-bold text-white mb-2 p-2 rounded" style="background: #508e6a;">${name}</h5>
+                    <p class="text-gray-600 text-lg mb-2">Price: <span class="font-semibold text-gray-900">Rp ${price}</span></p>
+                    <p class="text-gray-600 text-md mb-2">Description: <span class="italic">${description}</span></p>
+                    <p class="text-gray-600 text-md mb-2">Stock: <span class="font-semibold">${stock}</span></p>
+                    <p class="text-gray-600 text-md mb-2">Origin: <span class="font-semibold">${origin}</span></p>
+                    <p class="text-gray-600 text-md mb-2">Rating: <span class="font-semibold">${rating}</span></p>
+                    <p class="text-gray-600 text-md mb-4">Discount: <span class="font-semibold">${discount}%</span></p>
+                    
+                    <div class="flex justify-between items-center mt-4">
+                        <a href="/edit-product/${productId}" class="hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300" style="background: #569cca;">Edit</a>
+                        <form action="/delete/${productId}" method="POST" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            `;
+        });
+    }
+
+    // Set class and innerHTML after building the HTML string
+    document.getElementById("product_cards").className = classNameString;
+    document.getElementById("product_cards").innerHTML = htmlString;
+  }
+
+refreshProducts();
+
+document.getElementById("productForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    createProduct();
+  })
+</script>
+
 </div>
 {% endblock content %}
