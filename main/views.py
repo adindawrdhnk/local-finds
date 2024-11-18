@@ -13,6 +13,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
 from decimal import Decimal
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.http import JsonResponse
 
 @login_required(login_url='/login')
 def show_main(request):
@@ -132,3 +135,33 @@ def create_product_ajax(request):
     )
     new_product.save()
     return HttpResponse(b"CREATED", status=201)
+
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        try:
+            # Parse data dari body request
+            data = json.loads(request.body)
+
+            # Buat instance Product baru
+            new_product = Product.objects.create(
+                user=request.user,  # Mengambil user dari request (pastikan user sudah terautentikasi)
+                name=data.get("name"),
+                price=int(data.get("price", 0)),
+                description=data.get("description", ""),
+                stock=int(data.get("stock", 0)),
+                origin=data.get("origin", None),
+                rating=float(data.get("rating", 0.0)) if data.get("rating") else None,
+                discount=float(data.get("discount", 0.0)) if data.get("discount") else None
+            )
+
+            # Simpan data ke database
+            new_product.save()
+
+            # Kembalikan response sukses
+            return JsonResponse({"status": "success", "id": str(new_product.id)}, status=200)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+    # Jika metode bukan POST, kembalikan status error
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
